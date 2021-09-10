@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Admin Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Dashboard</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Date<span class="required">*</span></label>
+                <div class="col-sm-3">
+                    <div class="input-group date" data-target-input="nearest">
+                        <input type="text" class="form-control date" name="monthcalendar1" id="monthcalendar" autocomplete="off" value="{{current}}" />
+                    </div>
+                  <!-- <div class="input-group date" id="monthcalendar" data-target-input="nearest">
+                    <input type="text" name="monthcalendar1" value="{{current}}" id="monthcalendar" required class="form-control datetimepicker-input" data-target="#monthcalendar"/>
+                    <div class="input-group-append" data-target="#monthcalendar" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div> -->
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header border-0">
+                      <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Project wise hours</h3>
+                      </div>
+                    </div>
+                    <div class="card-body">                      
+                      <div id="bar-chart">
+                        <canvas id="hourschart" data-url="{% url 'admindrawchart' %}"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->
+
+                </div>
+
+                <div class="col-sm-6">
+                  <div class="card">
+                  <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                      <h3 class="card-title">Staff Monthly Working Hours</h3>
+                    </div>
+                  </div>
+                  <div class="card-body">                      
+                 <button type="button" class="btn btn-primary" onclick="exportdata()" >Export To CSV</button>
+                  </div>
+                </div> </div>
+                <div class="col-sm-6">
+                  <div class="card">
+                  <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                      <h3 class="card-title">Monthly Working Hours </h3>
+                    </div>
+                  </div>
+                  <div class="card-body">                      
+                 <button type="button" class="btn btn-primary" onclick="exportmetricdata()" >Monthly Metrics</button>
+                  </div>
+                </div> </div> 
+                <!-- /.col-md-6 -->
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header border-0">
+                      <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Staff wise hours</h3>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="bar-chart" >
+                            <canvas id="staffchart" data-url="{% url 'adminstaffchart' %}"></canvas>
+                          </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->     
+                </div>
+                <!-- /.col-md-6 -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+        <script>
+          $120 = jQuery.noConflict();
+          jQuery( document ).ready(function( $120 ) {
+              $120("#monthcalendar").datepicker({
+              format: "mm/yyyy",
+              startView: "months", 
+              minViewMode: "months"
+          });  
+            // Code that uses jQuery's $ can follow here.
+          });
+          // Code that uses other library's $ can follow here.
+          </script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>
+        $(function () {
+            var mn_yr = $("#monthcalendar").val();
+            var $projectChart = $("#hourschart");
+            var $staffChart = $("#staffchart");
+            var myChart;
+            var myStaffChart;
+
+            $.ajax({
+              url: $projectChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) { 
+                if (myChart) {
+                  myChart.destroy()
+                }     
+                let ctx = $projectChart[0].getContext("2d");      
+                myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: false
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+
+            $.ajax({
+              url: $staffChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {
+                if (myStaffChart) {
+                    myStaffChart.destroy()
+                }          
+                let ctx = $staffChart[0].getContext("2d");      
+                myStaffChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: false
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+
+            $120("#monthcalendar").datepicker({}).on("changeDate", function() { 
+
+            var mn_yr = $120("#monthcalendar").val();
+            if (myChart) {
+                myChart.destroy()
+            }
+            $.ajax({
+              url: $projectChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {
+                let ctx = $projectChart[0].getContext("2d");
+      
+                myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }],
+                    }
+                  }
+                });
+      
+              }
+            });
+            if (myStaffChart) {
+                myStaffChart.destroy()
+            }
+            $.ajax({
+              url: $staffChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {
+      
+                let ctx = $staffChart[0].getContext("2d");
+      
+                myStaffChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: false
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+ 
+        });
+            
+        });
+
+          const DownloadCsv = (function() {
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function(data, fileName) {
+              const blob = new Blob([data], {type: "octet/stream"}),
+                url = window.URL.createObjectURL(blob);
+              a.href = url;
+              a.download = fileName;
+              a.click();
+              window.URL.revokeObjectURL(url);
+            };
+          }());
+          function exportdata(){
+            var mn_yr = $("#monthcalendar").val();
+            var new_mn_yr = mn_yr.replace("/", "_");
+            $.ajax({
+              url:'exportcsv',
+              data:{
+                  'mn_yr':new_mn_yr
+              },
+              success:function(data){
+                DownloadCsv(data, 'R&DEq_'+new_mn_yr+'.csv')
+              }
+            });
+          }
+
+          const DownloadExcel = (function() {
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function(data, fileName) {
+              const blob = new Blob([data], {type: "application/vnd.ms-excel"}),
+                url = window.URL.createObjectURL(blob);
+              a.href = url;
+              a.download = fileName;
+              a.click();
+              window.URL.revokeObjectURL(url);
+            };
+          }());
+
+          function exportmetricdata(){
+            var mn_yr = $("#monthcalendar").val();
+            var new_mn_yr = mn_yr.replace("/", "_");
+            $.ajax({
+              url:'exportmetric',
+              xhrFields:{
+                responseType: 'blob'
+                  },
+              data:{
+                  'mn_yr':new_mn_yr
+              },
+              success:function(data){
+                var blob = data;
+                var downloadUrl = URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = downloadUrl;
+                a.download = 'MonthlyR&DEq_'+new_mn_yr+'.xlsx';
+                document.body.appendChild(a);
+                a.click();
+              }
+            });
+          }
+      
+        </script>
+{% endblock %}

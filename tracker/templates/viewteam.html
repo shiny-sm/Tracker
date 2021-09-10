@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Teams</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item ">Employee</li>
+                    <li class="breadcrumb-item active">Add Employee</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Team Details</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="input1">Project Manager</label>
+                      {{disPM.first_name}}
+     
+                    </div>
+                    <div class="form-group">
+                        <label>Team Members</label><br>
+                        {% for eachval in form %}
+                        {{eachval.id}} - {{eachval.first_name}} <br>
+                        {% endfor%}
+                      </div>  
+
+                      <div class="form-group">
+                        <label>Projects</label><br>
+                        {% for eachval in projects %}
+                         {{eachval.project}} <br>
+                        {% endfor%}
+                      </div>  
+
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button class="btn btn-light">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+{% endblock %}

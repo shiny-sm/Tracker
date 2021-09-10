@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Work Sub Category</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/admin">Home</a></li>
+                    <li class="breadcrumb-item "><a href="../tracker/subcategory">Sub Category</a></li>
+                    <li class="breadcrumb-item active">Add Sub category</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Add a sub category</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                        <label>Select category</label>
+                        <select name="catId" class="form-control" >
+                            {% for eachval in form %}
+                            <option value="{{eachval.id}}">{{eachval.category}}</option>
+                          {% endfor %}
+                        </select>
+                      </div> 
+                      <div id="inputFormRow">
+                        <div class="input-group mb-3">
+                          <input type="text" class="form-control m-input" name="subcategory[]" id="input1" placeholder="Enter subcategory" required>
+                          <div class="input-group-append">                
+                            <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+                        </div>
+                        </div>
+                        </div>
+                        <div id="newRow"></div>
+                        <button id="addRow" type="button" class="btn btn-info">Add Row</button>
+                      {% if error %}
+                      <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                      </div>
+                      {% endif %}
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button class="btn btn-light" id="cancel">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+          // add row
+          $("#addRow").click(function () {
+              var html = '';
+              html += '<div id="inputFormRow">';
+              html += '<div class="input-group mb-3">';
+              html += '<input type="text" name="subcategory[]" class="form-control m-input" placeholder="Enter subcategory" autocomplete="off">';
+              html += '<div class="input-group-append">';
+              html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+              html += '</div>';
+              html += '</div>';
+      
+              $('#newRow').append(html);
+          });
+      
+          // remove row
+          $(document).on('click', '#removeRow', function () {
+              $(this).closest('#inputFormRow').remove();
+          });
+
+          $(document).on('click', '#cancel', function (e) {
+            e.preventDefault();
+            window.location = "../tracker/subcategory";   
+          });
+      </script>
+{% endblock %}

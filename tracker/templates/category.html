@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-2">
+                  <a href="../tracker/addcategory" class="m-0"><button type="button" class="btn btn-block btn-secondary">Add Category</button></a>
+                </div><!-- /.col -->
+                <div class="col-sm-10">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Category</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Category List</h3>
+      
+                      <div class="card-tools"> </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Category</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for eachval in form %}
+                          <tr>
+                              <td>{{ eachval.id}}</td>
+                              <td>{{ eachval.category}}</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td><a href="#" id="editme{{ eachval.id}}" data-type="{{ eachval.id}}"><i class="fas fa-edit"></i></a></td>
+                          </tr>
+                          {% endfor %}  
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+                      {% if form.has_other_pages %}
+        <ul class="pagination pagination-sm m-0 float-right">
+          {% if form.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ form.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <!-- <li class="disabled"><span>&laquo;</span></li> -->
+            <li class="page-item"><span class="page-link">&laquo;</span></li>
+          {% endif %}
+          {% for i in form.paginator.page_range %}
+            {% if form.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if form.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ form.next_page_number }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+              <!-- FOR MODAL EDIT FORM -->
+
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+
+                  <div class="modal-content">
+                    <form method="POST" action="../tracker/editcategory" id="testform">
+                      {% csrf_token %}
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Edit category</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      </div>
+                    <div class="modal-footer">
+                      <button type="submit" id="test" class="btn btn-secondary" data-dismiss="modal">Submit</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div></form>
+                  </div>
+                </div>
+              </div>
+              <!-- FOR MODAL EDIT FORM -->
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  $(document).on("click", "[id^=editme]", function () {
+    var catid = $(this).attr("data-type"); 
+      $.ajax({
+              url: 'editcategory',
+              data:{
+                  'catid':catid
+              },
+              success:function (response){
+                  var total = response.labels.length;
+                  var html="";
+                  html += ' <table class="table table-striped">';
+                          html += '<thead>';  
+                          html += '<tr><th>Category</th><th><input type="hidden" value="'+catid+'" name="catid" /><input type="text" value="'+response.labels+'" name="categoryname" /></th></tr></thead><tbody>'; 
+                  html += '</tbody></table>';
+                  $("#myModal").find(".modal-body").html(html);
+                  $("#myModal").modal("show");
+              }
+
+          });
+    });
+
+  $(document).on('click', '#test', function () {
+    $('#testform').submit();
+  });
+
+</script>
+{% endblock %}
+
+<!-- AdminLTE App -->

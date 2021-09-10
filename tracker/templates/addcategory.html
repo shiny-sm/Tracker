@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Work Category</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/admin">Home</a></li>
+                    <li class="breadcrumb-item "><a href="../tracker/category">Category</a></li>
+                    <li class="breadcrumb-item active">Add category</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Add a category</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                        <label for="input1">Category</label>
+                        <input type="text" class="form-control" name="category" id="input1" placeholder="Category" required>
+                      </div>
+                      <div class="form-check form-check-flat form-check-primary">
+                        <label class="form-check-label">
+                          <input type="checkbox" class="form-check-input" name="forpm" value="1">
+                          For project manager?
+                        </label>
+                      </div>
+
+                      {% if error %}
+                      <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                      </div>
+                      {% endif %}
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button class="btn btn-light" id="cancel">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+          $(function () {
+          $(document).on('click', '#cancel', function (e) {
+            e.preventDefault();
+            window.location = "../tracker/category";   
+          });
+
+          })            
+            </script>
+{% endblock %}

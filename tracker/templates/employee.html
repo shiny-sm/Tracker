@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-2">
+                  <a href="../tracker/empadd" class="m-0"><button type="button" class="btn btn-block btn-secondary">Add Employee</button></a>
+                </div><!-- /.col -->
+
+                <div class="col-sm-10">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/admin">Home</a></li>
+                    <li class="breadcrumb-item active">Employee</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Employee List</h3>
+      
+                      <div class="card-tools">
+                        <form method="POST" action="./employees">{% csrf_token %}
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="namesearch" class="form-control float-right" placeholder="Search by name">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                              <i class="fas fa-search"></i>
+                            </button>
+                          </div>
+                        </div></form>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Emp Code</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Project Manager</th>
+                            <th>Status</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for eachval in users %}
+                          <tr>
+                              <td></td> 
+                              <td>{{ eachval.first_name}}</td>
+                              <td>{{ eachval.empcode}}</td>
+                              <td>{{ eachval.email}}</td>
+                              <td>{{ eachval.empmobile}}</td>
+                              <td>
+                                  {% if eachval.is_projectmanager == 1 %}
+                                  <input type="checkbox" class="form-check form-check-flat form-check-primary" name="is_projectmanager" value="1" checked disabled>
+                                  {% else %}
+                                  <input type="checkbox" class="form-check form-check-flat form-check-primary" name="is_projectmanager" value="1" unchecked disabled>
+                                  {% endif %}
+                              </td>
+                              <td>{% if eachval.is_active == 0 %}
+                                <button type="button" id="{{ eachval.id}}" class="btn btn-block btn-success btn-sm btn-click-activate" data-type="{{eachval.id}}">Activate</button>
+                                {% else %}
+                                <button type="button" id="{{ eachval.id}}" class="btn btn-block btn-danger btn-sm btn-click-deactivate" data-type="{{eachval.id}}">Deactivate</button>
+
+                                {% endif %}
+                              </td>
+                              <td><a id="{{eachval.id}}" class="btn-click-edit" name="Edit" value="Edit"><i class="fas fa-edit"></i></a></td>
+                          </tr>
+                          {% endfor %}  
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+                      {% if users.has_other_pages %}
+        <ul class="pagination pagination-sm m-0 float-right">
+          {% if users.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <!-- <li class="disabled"><span>&laquo;</span></li> -->
+            <li class="page-item"><span class="page-link">&laquo;</span></li>
+          {% endif %}
+          {% for i in users.paginator.page_range %}
+            {% if users.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if users.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ users.next_page_number }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+        var btnClassActivateClick = function(e){
+            $.getJSON("activate/", { tid: e.currentTarget.id}, function (j) {
+                  if(j==1){
+                    location.reload();
+                  }
+                  else{
+                    alert("Unknow error")
+                  }
+                  });
+        }
+
+        var btnClassDeactivateClick = function(e){
+            $.getJSON("deactivate/", { tid: e.currentTarget.id}, function (j) {
+              if(j==1){
+                    location.reload();
+                  }
+                  else{
+                    alert("Unknow error")
+                  }
+                 
+                  });
+        }
+
+
+
+          var btnEditClick = function(e){
+            $.ajax({
+              url: 'empupdate',
+              data:{
+                  'userid':e.currentTarget.id
+              },
+              success:function (e) {
+                $('.content-wrapper').html(e);
+              }
+          });
+        }
+
+        $('.btn-click-edit').on('click', btnEditClick);
+        $('.btn-click-activate').on('click', btnClassActivateClick);
+        $('.btn-click-deactivate').on('click', btnClassDeactivateClick);
+</script>
+{% endblock %}
+
+<!-- AdminLTE App -->

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/employee">Home</a></li>
+                    <li class="breadcrumb-item ">My Profile</li>
+                    <li class="breadcrumb-item active">Profile</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">My profile</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST" id="editempform" action="" >
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="input1">Name</label>
+                      <input type="hidden" class="form-control" name="userid" value="{{objUser.id}}" id="userid">
+                      <input type="text" class="form-control" name="first_name" value="{{objUser.first_name}}" id="first_name" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="input2">Employee code</label>
+                      <input type="text" name="empcode" class="form-control" id="empcode" value="{{objUser.empcode}}" placeholder="Employee code" required>
+                    </div>
+                  <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" value="{{objUser.email}}" placeholder="Email" required> 
+                  </div>
+                  <div class="form-group">
+                      <label for="input4">Contact</label>
+                      <input type="text" class="form-control" name="empmobile" id="empmobile" value="{{objUser.empmobile}}" placeholder="Contact" autocomplete="off"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                    </div>
+                  </div>
+                  <!-- /.card-body -->  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2 save" id="save">Update</button>
+                    <button class="btn btn-light" id="cancel">Cancel</button>
+                    {% if msg %}
+                    <div class="alert alert-success d-inline-block" role="alert">
+                        {{msg}}
+                      </div>
+                      {% endif %}
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+            $(document).on('click', '#save', function (e) {
+            var isValid = true;
+             e.preventDefault();
+             var add = 0;
+             var j = 0;
+
+            if(!$("#first_name").val()){
+              $("#first_name").addClass('is-invalid');
+              isValid = false;
+            }
+            else{
+              $("#first_name").removeClass('is-invalid');
+            }
+
+            if(!$("#empcode").val()){
+              $("#empcode").addClass('is-invalid');
+              isValid = false;
+            }
+            else{
+              $("#empcode").removeClass('is-invalid');
+            }
+
+            if(!$("#email").val()){
+              $("#email").addClass('is-invalid');
+              isValid = false;
+            }
+            else{
+              if( !validateEmail($("#email").val())) {
+                $("#email").addClass('is-invalid');
+                isValid = false;
+                }
+                else{
+                  $("#email").removeClass('is-invalid');
+                }
+            }
+
+            if (isValid){
+                $('#editempform').submit();
+            }  
+          });
+
+          function validateEmail($email) {
+              var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+              return emailReg.test( $email );
+            }
+
+
+          $(document).on('click', '#cancel', function (e) {
+            e.preventDefault();
+            window.location = "../tracker/employee";   
+          });
+        </script>
+{% endblock %}

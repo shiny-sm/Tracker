@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item ">Task</li>
+                    <li class="breadcrumb-item active">Add Task</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Add Task</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST" id="taskform">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="input1">Name</label>
+                      {{username.first_name}} --- {{username.id}}
+                    </div>
+                    <div class="form-group">
+                      <label for="input2">Reporting Head</label>{{pm.first_name}}  ---- {{pm.id}}
+                    </div>
+                  <div class="form-group">
+                    <label for="input3">Project</label>
+                    <select name="catId" class="form-control" >
+                        {% for eachval in listprojects %}
+                        <option value="{{eachval.id}}">{{eachval.project}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="input4">Date</label>
+                      <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                     <!--  <input type="text" id="datepicker" class="form-control"> -->
+                    </div>
+                    <div class="form-group">
+                        <label for="input4">Duration</label>
+                        <input type="text" class="form-control" name="" id="">
+                      </div>
+                      <div class="form-group">
+                        <label for="input4">Category</label>
+                        <select name="id_category" id="id_category" class="form-control" >
+                            {% for j in categorylist %}
+                            <option value="{{j.id}}">{{j.category}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="input4">Subcategory</label>
+                        <select name="id_subcategory" id="id_subcategory" class="form-control">
+                            <option value="">---------</option>
+                            {% for k in subcategorylist %}
+                            <option value="{{k.id}}">{{k.subcategory}}</option>
+                          {% endfor %}
+                        </select>
+                        
+                      </div>
+                      <div class="form-group">
+                        <label for="input4">Description</label>
+                        <input type="text" class="form-control" name="3" id="3" >
+                      </div>
+                      <div class="form-group">
+                        <label for="input4">Status</label>
+                        <input type="text" class="form-control" name="2" id="2" >
+                      </div>
+                      <div class="form-group">
+                        <label for="input4">Comments</label>
+                        <input type="text" class="form-control" name="1" id="1">
+                      </div>
+
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button class="btn btn-light">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(function () {
+            // inspect html to check id of category select dropdown.
+            $(document).on("change", "select#id_category", function () {
+            $.getJSON("subcategories/", { id: $(this).val() }, function (j) {
+            var options = '<option value="">---------</option>';
+            for (var i = 0; i < j.length; i++) {
+            options +=
+            '<option value="' + j[i].id + '">' + j[i].subcategory + "</option>";
+            }
+            // inspect html to check id of subcategory select dropdown.
+            $("select#id_subcategory").html(options);
+            });
+            });
+
+            })
+
+            
+            </script>
+{% endblock %}

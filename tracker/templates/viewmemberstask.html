@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-12">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/pmhome">Home</a></li>
+                    <li class="breadcrumb-item active">Team members' tasks</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+          <form method="POST" id="tetform">{% csrf_token %}
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Team Members tasks</h3>                      
+                      <div class="card-tools">
+                          
+                        <div class="row">
+                        
+                              <div class="col-4 text-right">
+                                <label>Month/Year</label>
+                             </div>
+                              <div class="col-6 text-right">
+                                  <input type="text" value="{{ seekmonth }}" class="form-control" name="monthyear" id="monthyear" autocomplete="off" />
+                               </div>
+                              <div class="col-2 text-left"><button type="submit" class="btn btn-default" id="searchform">
+                                  <i class="fas fa-search"></i>
+                                </button>  </div>
+                             </div> 
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Project</th>
+                            <th>Subcategory</th>
+                            <th>Description</th>
+                            <th>Hours</th>
+                            <th data-sortable="true" scope="col">Date</th>
+                            <th>work status</th>
+                            <th>&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for eachval in form %}
+                          <tr>
+                              <td>{{ eachval.userid.first_name }}</td>
+                              <td>{{ eachval.projectid.project}}</td>
+                              <td>{{ eachval.subcatid.subcategory}}</td>
+                              <td style="max-width: 120px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" data-toggle="tooltip" title="{{eachval.description}}">{{ eachval.description}}</td>
+                              <td>{{ eachval.hours}}</td>
+                              <td>{{ eachval.startdate}}</td>
+                              <td>{% if eachval.work_status == 1 %}
+                                <span class="badge bg-success">Completed</span>
+                                  {% else %}
+                                  <span class="badge bg-warning">In progress</span>
+                                  {% endif %}</td>
+                              <td></td>
+                          </tr>
+                          {% endfor %}  
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+      {% if form.has_other_pages %}
+        <ul class="pagination pagination-sm m-0 float-right">
+          {% if form.has_previous %}
+          <li class="page-item"><a class="page-link" id="test" data-type="{{ form.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <!-- <li class="disabled"><span>&laquo;</span></li> -->
+            <li class="page-item"><span class="page-link">&laquo;</span></li>
+          {% endif %}
+          {% for i in form.paginator.page_range %}
+            {% if form.number == i %}
+            <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" id="test" data-type="{{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if form.has_next %}
+          <li class="page-item"><a class="page-link" id="test" data-type="{{ form.next_page_number }}" >&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+      <input type="hidden" name="pagep" id="pagep" value="" />
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          </form>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- /.scripts for month year calendar -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<!-- /.scripts for month year calendar -->
+        <script>
+
+          var btnClassClick = function(e){
+              $.getJSON("taskdelete", { tid: e.currentTarget.id}, function (j) {
+                    if(j==1){
+                      location.reload();
+                    }
+                    });
+          }
+
+          var btnEditClick = function(e){
+            $.ajax({
+              url: 'taskupdate',
+              data:{
+                  'taskId':e.currentTarget.id
+              },
+              success:function (e) {
+                $('.content-wrapper').html(e);
+              }
+          });
+        }
+
+        $("#monthyear").datepicker({
+            format: "mm/yyyy",
+            startView: "months", 
+            minViewMode: "months"
+        });
+
+          $('.btn-click-action').on('click', btnClassClick);
+          $('.btn-click-edit').on('click', btnEditClick);
+
+        $(document).on('click', '#test', function (e) {
+          var type = $(this).attr("data-type");          
+          $("#pagep").val(type)
+          $("#tetform").submit()
+        });
+
+        $(document).on('click', '#searchform', function (e) {
+          var type = $(this).attr("data-type");          
+          $("#pagep").val(type)
+          $("#tetform").submit()
+        });
+      </script>
+
+{% endblock %}
+
+<!-- AdminLTE App -->

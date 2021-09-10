@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Monthly working hours</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item ">Monthly</li>
+                    <li class="breadcrumb-item active">working hours</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Add monthly working hours</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Date<span class="required">*</span></label>
+                        <div class="col-sm-3">
+                          <div class="input-group date" id="workhrs" data-target-input="nearest">
+                            <input type="text" name="workhrs" id="workhrs" required class="form-control datetimepicker-input" data-target="#workhrs"/>
+                            <div class="input-group-append" data-target="#workhrs" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Total hours<span class="required">*</span></label>
+                        <div class="col-sm-3">
+                            <input type="text" name="totalhrs" id="totalhrs" required />
+                        </div>
+                      </div>
+                      {% if error %}
+                      <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                      </div>
+                      {% endif %}
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button class="btn btn-light" id="cancel">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+          $(function () {
+          $(document).on('click', '#cancel', function (e) {
+            e.preventDefault();
+            window.location = "../tracker/workhrs";   
+          });
+
+          })            
+            </script>
+{% endblock %}

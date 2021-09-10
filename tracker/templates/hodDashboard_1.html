@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Head of Department Dashboard</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Dashboard</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Date<span class="required">*</span></label>
+                <div class="col-sm-3">
+                  <div class="input-group date" id="monthcalendar" data-target-input="nearest">
+                    <input type="text" name="monthcalendar1" value="{{current}}" id="monthcalendar" required class="form-control datetimepicker-input" data-target="#monthcalendar"/>
+                    <div class="input-group-append" data-target="#monthcalendar" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-header border-0">
+                      <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Work hours Staff</h3>
+                      </div>
+                    </div>
+                    <div class="card-body">                      
+                      <div id="bar-chart" style="height: 300px;">
+                        <canvas id="hourschart" data-url="{% url 'admindrawchart' %}"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->
+
+                  <!-- {% if msg%}
+                  <div class="callout callout-danger">
+                    <h5>{{msg}}</h5>
+                  </div>
+                  {% endif %} -->
+
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                      <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                          <h3 class="card-title">Monthly Reports</h3>
+                        </div>
+                      </div>
+                      <div class="card-body">                      
+                     <button type="button" class="btn btn-primary" onclick="exportdata()" >Export To CSV</button>
+                      </div>
+                    </div>
+ 
+                  </div>
+                <!-- /.col-md-6 -->
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-header border-0">
+                      <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Projects</h3>
+                        <a href="javascript:void(0);">View Report</a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="bar-chart" >
+                            <canvas id="staffchart" data-url="{% url 'adminstaffchart' %}"></canvas>
+                          </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->
+      
+                 
+                </div>
+                <!-- /.col-md-6 -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+        <script>
+        $(function () {
+
+            $('#monthcalendar').datetimepicker({
+              format: 'MM/YYYY'
+            });
+
+            var mn_yr = $("#monthcalendar").find("input").val();
+            var $projectChart = $("#hourschart");
+            var $staffChart = $("#staffchart");
+
+            $.ajax({
+              url: $projectChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {      
+                var ctx = $projectChart[0].getContext("2d");      
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+
+            $.ajax({
+              url: $staffChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {      
+                var ctx = $staffChart[0].getContext("2d");      
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+
+          $("#monthcalendar").on("change.datetimepicker", ({date}) => {
+            var mn_yr = $("#monthcalendar").find("input").val();
+
+            $.ajax({
+              url: $projectChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {
+                var ctx = $projectChart[0].getContext("2d");
+      
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }],
+                    }
+                  }
+                });
+      
+              }
+            });
+
+            $.ajax({
+              url: $staffChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr
+              },
+              success: function (response) {
+      
+                var ctx = $staffChart[0].getContext("2d");
+      
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }]
+                    }
+                  }
+                });
+      
+              }
+            });
+    
+    
+    
+    
+    
+        });
+            
+        });
+
+          const DownloadCsv = (function() {
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function(data, fileName) {
+              const blob = new Blob([data], {type: "octet/stream"}),
+                url = window.URL.createObjectURL(blob);
+              a.href = url;
+              a.download = fileName;
+              a.click();
+              window.URL.revokeObjectURL(url);
+            };
+          }());
+          function exportdata(){
+            var mn_yr = $("#monthcalendar").find("input").val();
+            var new_mn_yr = mn_yr.replace("/", "_");
+            $.ajax({
+              url:'exportcsv',
+              data:{
+                  'mn_yr':new_mn_yr
+              },
+              success:function(data){
+                DownloadCsv(data, 'R&DEq_'+new_mn_yr+'.csv')
+              }
+            });
+          }
+      
+        </script>
+{% endblock %}

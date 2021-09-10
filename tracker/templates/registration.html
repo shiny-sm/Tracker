@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registration Page</title>
+   <!-- Google Font: Source Sans Pro -->
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+   <!-- Font Awesome -->
+   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+   <!-- icheck bootstrap -->
+   <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+   <!-- Theme style -->
+   <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+   <link rel="icon" href="{% static 'dist/img/favicon-32.png' %}" sizes="32x32" type="image/png" />
+   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'dist/img/favicon-16.png' %}">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body class="hold-transition register-page">
+  
+
+<div class="register-box">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="#" class="h1"><img src="{% static 'dist/img/logo-9E1.svg' %}" /></a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Registration Form</p>
+
+      <form action="./" method="POST">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="text" name='firstname' class="form-control" placeholder="Full name" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="email" name='email' class="form-control" placeholder="Email" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+            <input type="text" name='empcode' class="form-control" placeholder="Employee Code" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class='fas fa-id-card-alt'></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" name='contact' class="form-control" placeholder="Contact" autocomplete="off"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class='fas fa-phone-alt'></span>
+              </div>
+            </div>
+          </div>
+        <div class="input-group mb-3">
+          <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" id=confirm_password class="form-control" placeholder="Retype password" oninput="check(this)">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+
+
+      {% if error %}
+      <p  class="alert alert-danger" role="alert">
+        {{error}}
+      </p>
+      {% endif %}
+
+
+
+       
+        
+        <div class="row">
+          <div class="col-8">
+            <!-- <div class="icheck-primary">
+              <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+              <label for="agreeTerms">
+               I agree to the <a href="#">terms</a>
+              </label>
+            </div> -->
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" id="btnSubmit" class="btn btn-primary btn-block">Register</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <a href="/" class="text-center">I have already registered</a>
+    </div>
+    <!-- /.form-box -->
+  </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+
+
+
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+
+
+
+<script language='javascript' type='text/javascript'>
+  function check(input) {
+      if (input.value != document.getElementById('password').value) {
+          input.setCustomValidity('Password Must be Matching.');
+      } else {
+          // input is valid -- reset the error message
+          input.setCustomValidity('');
+      }
+  }
+  
+</script>
+</body>
+</html>

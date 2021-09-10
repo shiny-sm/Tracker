@@ -1,0 +1,257 @@
+      <!-- Content Wrapper. Contains page content -->
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/employee">Home</a></li>
+                    <li class="breadcrumb-item "><a href="../tracker/task">Task</a></li>
+                    <li class="breadcrumb-item active">Add Task</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-12">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Update Task</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST" id="taskform" action="./taskedited">
+                    {% csrf_token %}
+                    
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="input1">Name</label>
+                      {{username.first_name}}
+                    </div>
+                    <div class="form-group">
+                      <label for="input2">Reporting Head</label>{{tasks.PMId.first_name}}
+                    </div>
+                  <div class="form-group row">
+                    <label class="col-sm-1 col-form-label">Date<span class="required">*</span></label>
+                    <div class="col-sm-2">
+                      <div class="input-group date" id="selectdate" data-target-input="nearest">
+                        <input type="text" disabled name="taskdate" id="taskdate" required class="form-control datetimepicker-input" data-target="#selectdate" value="{{ tasks.startdate|date:'m/d/Y' }}"/>
+                        <div class="input-group-append" data-target="#selectdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-5 alert alert-danger"  id="hrsexceeded" style="display: none;" role="alert">dfsdfs</div>
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">{{error}}</div>
+                    {% endif %}
+                  </div>
+                  <!-- adding task details card -->
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="form-group row"><input type="hidden" name="taskid" value="{{tasks.id}}" id="taskid" />
+                        <label class="col-sm-1 col-form-label">Project<span class="required">*</span></label>
+                        <div class="col-sm-2"><input type="hidden" value="{{tasks.id}}" name="taskId" />
+                          <select name="projectid" class="form-control" id="pjts0" >
+                            {% for eachval in listprojects %}
+                            {% if eachval.projectid.id == tasks.projectid.id %}
+                            <option value="{{eachval.projectid.id}}" selected>{{eachval.projectid.project}}</option>
+                            {% else %}
+                            <option value="{{eachval.projectid.id}}">{{eachval.projectid.project}}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                        </div>
+                        <label class="col-sm-1 col-form-label">Category<span class="required">*</span></label>
+                        <div class="col-xs-2 text-left">
+                        <select name="id_category" id="id_category0" class="form-control" data-type="0" >
+                          {% for j in categorylist %}
+                          {% if j.id == tasks.catid.id %}
+                          <option value="{{j.id}}" selected>{{j.category}}</option>
+                          {% else %}
+                          <option value="{{j.id}}">{{j.category}}</option>
+                          {% endif %}
+                        {% endfor %}
+                      </select></div>
+                        <label class="col-sm-2 col-form-label">Sub Category<span class="required">*</span></label>
+                        <div class="col-sm-3"><select name="id_subcategory" id="id_subcategory0" class="form-control" data-type="0" required>
+                          <option value="">---------</option>
+                          {% for k in subcategorylist %}
+                          {% if k.id == tasks.subcatid.id %}
+                          <option value="{{k.id}}" selected>{{k.subcategory}}</option>
+                          {% else %}
+                          <option value="{{k.id}}">{{k.subcategory}}</option>
+                          {% endif %}
+
+                        {% endfor %}
+                      </select></div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Description<span class="required">*</span></label>
+                        <div class="col-sm-3">
+                          <textarea name="description" id="description0" class="form-control" rows="3" placeholder="Enter ..." required>{{tasks.description}}</textarea>
+                        </div>
+                        <label class="col-sm-2 col-form-label">Comments</label>
+                        <div class="col-sm-3">
+                          <textarea class="form-control" name="comments" rows="3" placeholder="Enter ...">{{tasks.comments}}</textarea>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Work Status<span class="required">*</span></label>
+                        <div class="col-sm-3">
+                          <select name="work_status" id="id_workstatus0" class="form-control" data-type="0" >
+                            {% if tasks.work_status == 0 %}
+                            <option value="0"  selected >In progress</option>
+                            <option value="1" >Completed</option>
+                            {% else %}
+                            <option value="0">In progress</option>
+                            <option value="1" selected >Completed</option>
+                            {% endif %}
+                        </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label">Duration<span class="required">*</span></label>
+                        <div class="col-sm-3">
+                          <input type="text" class="form-control hours" name="duration" id="hours0" data-type="0" required value="{{tasks.hours}}" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
+                        </div>
+                        <!-- <div class="col-sm-2"><button id="removeRow" type="button" class="btn btn-danger">Remove</button></div> -->
+                        
+                      </div>
+                      
+                      </div>
+                  </div>
+                  <div id="newRow"></div>
+
+ <!-- end adding task details card -->
+
+                  </div>
+                  <!-- /.card-body -->
+  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2 save" id="save" data-catid=>Submit</button>
+                                        <button class="btn btn-primary">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        <!-- /.content-wrapper -->
+        <script type="text/javascript">
+          $(function () {
+          var counter = 0;
+           $(document).on("change", "[id^=id_category]", function () {
+              var type = $(this).attr("data-type");         
+              $.getJSON("subcategories/", { id: $(this).val() }, function (j) {
+                var options = '<option value="">---------</option>';
+                for (var i = 0; i < j.length; i++) {
+                  options +=
+                  '<option value="' + j[i].id + '">' + j[i].subcategory + "</option>";
+                }
+            // inspect html to check id of subcategory select dropdown.
+                $("select#id_subcategory"+type).html(options);
+              });
+            });          
+                      // add row event
+ 
+         $(document).on('click', '#save', function (e) {
+            var isValid = true;
+             e.preventDefault();
+             var add = 0;
+             var j = 0;
+
+             if(!$("#taskdate").val()){
+              $("#taskdate").addClass('is-invalid');
+              alert('Select task date!!')
+              isValid = false;
+             }
+             else{
+              $("#taskdate").removeClass('is-invalid');
+             }
+             for (var i = 0; i <= counter; i++) {
+                var selected = $("#id_subcategory"+i).find('option:selected').val();
+                var decs = $("#description"+i).val();
+                var hrx = $("#hours"+i).val();
+
+                if (selected == ''){
+                  $("#id_subcategory"+i).addClass('is-invalid');
+                  isValid = false;
+                }
+                else{
+                  $("#id_subcategory"+i).removeClass('is-invalid')
+                }
+
+                if (decs == ''){
+                  $("#description"+i).addClass('is-invalid');
+                  isValid = false;
+                }
+                else{
+                  $("#description"+i).removeClass('is-invalid')
+                }
+
+                if (hrx == ''){
+                  $("#hours"+i).addClass('is-invalid');
+                  isValid = false;
+                }
+                else{
+                  $("#hours"+i).removeClass('is-invalid')
+                }
+
+             }
+             if (isValid){
+              $(".hours").each(function() {
+                    add += Number($(this).val());
+                });
+                var d = $("input#taskdate").val();
+                var tsid = $("input#taskid").val();
+                if(d !=""){
+                  $.getJSON("checkhours/", { hrs: add,dta: d, tid:tsid}, function (j) {
+                  if(!j){
+                    j = 0
+                  }
+                    if (parseInt(add)+parseInt(j) > 8){
+                      //$("input#hours"+type).focus();
+                      $("#hrsexceeded").show();
+                      if (j == 0){
+                        $("#hrsexceeded").html("Cannot enter more than 8 hours for a day");
+                      }
+                      else{
+
+                        $("#hrsexceeded").html("You have already spend <b>" +j+ "</b> hours on this date");
+                      }
+                      
+                      return false;
+                    }
+                    else{
+                      $('#taskform').submit();
+                    }
+                  });
+
+
+                }
+ 
+            
+             }
+  
+          });
+
+          
+          var dateFormat = "MM/DD/YYYY";
+
+          $('#selectdate').datetimepicker({
+            format: dateFormat
+          });
+
+          })            
+            </script>

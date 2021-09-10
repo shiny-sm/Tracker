@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-2">
+                  <a href="../tracker/addsubcategory" class="m-0"><button type="button" class="btn btn-block btn-secondary">Add sub category</button></a>
+                </div><!-- /.col -->
+                <div class="col-sm-10">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Sub Category</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+          <form method="POST" action="./subcategory">
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Sub Category List</h3>
+      
+                      <div class="card-tools">
+                        
+                          {% csrf_token %}
+                        <div class="row">
+                          <div class="col-9 text-right">
+                            <select class="form-control" name="category">
+                                <option value="0">Select Category</option>
+                                {% for category in categories %}
+
+                                {% if selectedcatid == category.id %}
+                                <option value="{{category.id}}" selected>{{category.category}}</option>
+                                {% else %}
+                                <option value="{{category.id}}">{{category.category}}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            </div>
+                                <div class="col-1 text-left"><button type="submit" class="btn btn-default">
+                                    <i class="fas fa-search"></i>
+                                  </button>  </div>
+                                </div>
+                              
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Category</th>
+                            <th>Sub Category</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for eachval in form %}
+                          <tr>
+                              <td>{{ eachval.CatId.category}}</td>
+                              <td>{{ eachval.subcategory}}</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td><a id="{{eachval.id}}" class="btn-click-edit" name="Edit" value="Edit"><i class="fas fa-edit"></i></a></td>
+                          </tr>
+                          {% endfor %}  
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+                        {% if form.has_other_pages %}
+          <ul class="pagination pagination-sm m-0 float-right">
+            {% if form.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ form.previous_page_number }}&catid={{selectedcatid}}">&laquo;</a></li>
+            {% else %}
+              <!-- <li class="disabled"><span>&laquo;</span></li> -->
+              <li class="page-item"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+            {% for i in form.paginator.page_range %}
+              {% if form.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}&catid={{selectedcatid}}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+            {% if form.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ form.next_page_number }}&catid={{selectedcatid}}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+                      </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </form>
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+
+        var btnEditClick = function(e){
+            $.ajax({
+              url: 'editsubcat',
+              data:{
+                  'subcatId':e.currentTarget.id
+              },
+              success:function (e) {
+                $('.content-wrapper').html(e);
+              }
+          });
+        }
+
+        $('.btn-click-edit').on('click', btnEditClick);
+        </script>
+{% endblock %}
+
+<!-- AdminLTE App -->

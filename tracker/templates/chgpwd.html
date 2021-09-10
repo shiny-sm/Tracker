@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                 </div><!-- /.col -->
+                <div class="col-sm-6">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item ">Profile</li>
+                    <li class="breadcrumb-item active">Change Password</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+      
+          <!-- Main content -->
+          <div class="content">
+            <div class="container-fluid">
+              <div class="col-md-6">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">Change Password</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form method="POST" id="chgpwdform">
+                    {% csrf_token %}
+                  <div class="card-body">
+                    <div class="form-group">
+                      <label for="input1">Current Password</label>
+                      <input type="password" class="form-control" name="current_pwd" id="current_pwd" placeholder="Current password" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="input2">New password</label>
+                      <input type="password" name="new_pwd" class="form-control" id="new_pwd" placeholder="New password" required>
+                    </div>
+                  <div class="form-group">
+                    <label for="input3">Confirm password</label>
+                    <input type="password" name="confirm_pwd" class="form-control" id="confirm_pwd" placeholder="Confirm password" required> 
+                  </div> 
+                  </div>
+                  <!-- /.card-body -->  
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2 save" id="save">Change</button>
+                    <button class="btn btn-light" id="cancel">Cancel</button>
+                    {% if msg %}
+                    <div class="alert alert-success d-inline-block" role="alert">
+                        {{msg}}
+                      </div>
+                      {% endif %}
+                      {% if err %}
+                      <div class="alert alert-danger d-inline-block" role="alert">
+                          {{err}}
+                        </div>
+                        {% endif %}
+                  </div>
+                </form>
+              </div>
+              <!-- /.card -->
+            </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+            $(document).on('click', '#save', function (e) {
+            var isValid = true;
+             e.preventDefault();
+             var add = 0;
+             var j = 0;
+
+            if(!$("#current_pwd").val()){
+              $("#current_pwd").addClass('is-invalid');
+              isValid = false;
+            }
+            else{
+              $("#current_pwd").removeClass('is-invalid');
+            }
+
+            if(!$("#new_pwd").val()){
+              $("#new_pwd").addClass('is-invalid');
+              isValid = false;
+            }
+            else{
+              if($("#new_pwd").val() != $("#confirm_pwd").val()){
+                $("#new_pwd").addClass('is-invalid');
+                $("#confirm_pwd").addClass('is-invalid');
+                isValid = false;
+                alert('Make sure your passwords match.');
+              }
+              else{
+                $("#new_pwd").removeClass('is-invalid');
+                $("#confirm_pwd").removeClass('is-invalid');
+              }
+            }
+
+            if(!$("#confirm_pwd").val()){
+              $("#confirm_pwd").addClass('is-invalid');
+              isValid = false;
+            }
+
+            if (isValid){
+                $('#chgpwdform').submit();
+            }
+  
+          });
+
+          $(document).on('click', '#cancel', function (e) {
+            e.preventDefault();
+            window.location = "../tracker/employee";   
+          });
+        </script>
+{% endblock %}

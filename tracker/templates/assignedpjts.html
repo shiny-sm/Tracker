@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-2">
+                  <a href="../../tracker/assignpjt" class="m-0"><button type="button" class="btn btn-block btn-secondary">Assign project</button></a>
+                </div><!-- /.col -->
+                <div class="col-sm-10">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="../tracker/">Home</a></li>
+                    <li class="breadcrumb-item active">Assigned Projects</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Assigned Project list</h3>
+      
+                      <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+      
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Project manager</th>
+                            <th>Project</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for eachval in form %}
+                          <tr>
+                              <td>{{ eachval.PMId.first_name}}</td>
+                              <td>{{ eachval.projectid.project}}</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td><a id="{{eachval.id}}" class="btn-click-edit" name="Edit" value="Edit"><i class="fas fa-edit"></i></a></td>
+                              <td><a id="{{eachval.id}}" class="btn-click-action" data-type="{{eachval.id}}"><i class="fas fa-trash"></i></a></td>
+                          </tr>
+                          {% endfor %}  
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+                        {% if form.has_other_pages %}
+          <ul class="pagination pagination-sm m-0 float-right">
+            {% if form.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ form.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+              <!-- <li class="disabled"><span>&laquo;</span></li> -->
+              <li class="page-item"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+            {% for i in form.paginator.page_range %}
+              {% if form.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+            {% if form.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ form.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+                      </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          </div>
+          <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+
+
+        var btnClassClick = function(e){
+            $.getJSON("assgnprojdel/", { tid: e.currentTarget.id}, function (j) {
+                  if(j==1){
+                    location.reload();
+                  }
+                  });
+        }
+
+        var btnEditClick = function(e){
+            $.ajax({
+              url: 'updproj',
+              data:{
+                  'aspjId':e.currentTarget.id
+              },
+              success:function (e) {
+                $('.content-wrapper').html(e);
+              }
+          });
+        }
+
+        $('.btn-click-action').on('click', btnClassClick);
+        $('.btn-click-edit').on('click', btnEditClick);
+        </script>
+{% endblock %}
+
+<!-- AdminLTE App -->

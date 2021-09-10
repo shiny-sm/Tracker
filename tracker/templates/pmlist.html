@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .accordion {
+        margin: 15px;
+    }
+      
+    .accordion .fa {
+        margin-right: 0.2rem;
+    }
+</style>
+      <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+          <div class="content-header">
+            <div class="container-fluid">
+              <div class="row mb-2">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-6"><form method="POST" id="formsub" action="./pm"> {% csrf_token %}
+                  <div class="form-group row">
+                      <label class="col-sm-1 col-form-label">Date<span class="required">*</span></label>
+                      <div class="col-sm-5">
+                        <div class="input-group date" data-target-input="nearest">
+                          <input type="text" class="form-control date" name="monthcalendar1" id="monthcalendar" autocomplete="off" value="{{current}}" />
+                      </div>
+                        <!-- <div class="input-group date" id="monthcalendar" data-target-input="nearest">
+                          <input type="text" name="monthcalendar1" value="{{current}}" id="monthcalendar" required class="form-control datetimepicker-input" data-target="#monthcalendar"/>
+                          <div class="input-group-append" data-target="#monthcalendar" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                          </div>
+                      </div> -->
+                      </div>
+                    </div></form></div>
+                <div class="col-sm-4">
+                  <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Project Managers</li>
+                  </ol>
+                </div><!-- /.col -->
+              </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+          </div>
+          <!-- /.content-header -->
+
+          <div class="content">
+            <div class="container-fluid">
+ <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mw-100 w-75" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Category wise hours</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+                <div class="accordion">                      
+                    <div class="accordion" id="accordionExample">
+                        {% regroup teams by PMid as PMid_list %}
+                        {% for PMid in PMid_list %} 
+                        <div class="card">
+                            <div class="card-header" id="headingOne{{ PMid.grouper.id }}">
+                                <h2 class="mb-0">
+                                    <button type="button"
+                                        id="test{{ PMid.grouper.id }}"                                       
+                                        data-type="{{ PMid.grouper.id }}"
+                                        class="btn btn-link"
+                                        data-toggle="collapse"
+                                        data-target="#collapseOne{{ PMid.grouper.id }}">
+                                        <i class="fa fa-plus"></i>
+                                        {{ PMid.grouper.first_name }} {{ PMid.grouper.id }} 
+                                    </button>                                 
+                                </h2>
+                            </div>
+                              
+                            <div id="collapseOne{{ PMid.grouper.id }}" class="collapse"
+                                aria-labelledby="headingOne{{ PMid.grouper.id }}"
+                                data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                              <span class="badge badge-primary">Team Members</span>
+                                              <div class="d-flex flex-column bd-highlight">
+                                                {% for tm in PMid.list %}
+                                                Team id {{ tm.id }}
+                                                    {% for j in mems %}
+                                                    {% if j.teamid.id == tm.id %}
+                                                <div class="bd-highlight">{{ j.teamid.id }}  -  {{ j.staffid.first_name }} </div>
+                                                {% endif %}
+                                                {% endfor%}                                                
+                                                {% endfor %}
+                                               </div>  
+                                               <span class="badge badge-primary">Projects Handled</span>
+                                                <div class="d-flex flex-column bd-highlight">
+                                                  {% for x in pmprojects %}
+                                                  <div class="bd-highlight">
+                                                    {% if x.PMId.id == PMid.grouper.id %}
+                                                    {{ x.projectid.project }} 
+                                                    {% endif %}
+                                                  </div>
+                                                  {% endfor %}
+                                                </div>                                              
+ 
+                                        </div>
+                                        <div class="col-9">
+                                            <div id="bar-chart" >
+                                                <canvas id="pmteamchart{{ PMid.grouper.id }}" data-url="{% url 'pmteamchart' %}" data-type="{{ PMid.grouper.id }}"></canvas>
+                                              </div>
+                                        </div>
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %} 
+
+                    </div><!-- class="accordion"-->
+                </div> <!-- class="accordion"-->
+
+              </div><!-- class="container-fluid" -->
+              <!-- /.row -->
+            </div>
+            <!-- /.content -->
+          
+        </div>
+        <!-- /.content-wrapper -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+        <script>
+          $120 = jQuery.noConflict();
+          jQuery( document ).ready(function( $120 ) {
+              $120("#monthcalendar").datepicker({
+              format: "mm/yyyy",
+              startView: "months", 
+              minViewMode: "months"
+          });  
+            // Code that uses jQuery's $ can follow here.
+          });
+          // Code that uses other library's $ can follow here.
+          </script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                var mn_yr = $("#monthcalendar").val();
+                // is open by default
+                $(".collapse.show").each(function() {
+                    $(this).prev(".card-header").find(".fa")
+                        .addClass("fa-minus").removeClass("fa-plus");                        
+                });      
+                // Toggle plus minus icon on show hide
+                // of collapse element
+                $(".collapse").on('show.bs.collapse', function() {
+                    $(this).prev(".card-header").find(".fa")
+                        .removeClass("fa-plus").addClass("fa-minus");
+                }).on('hide.bs.collapse', function() {
+                    $(this).prev(".card-header").find(".fa")
+                        .removeClass("fa-minus").addClass("fa-plus");
+                });
+
+                $120("#monthcalendar").datepicker({}).on("changeDate", function() {                 
+                    $('form#formsub').submit();
+                });
+
+            });
+
+            var myChart;
+            $(document).on("click", "[id^=test]", function () {
+              if (myChart) {
+                myChart.destroy()
+              }
+              let mn_yr = $("#monthcalendar").val();
+              var pmid = $(this).attr("data-type");   
+              var $pmteamChart = $("#pmteamchart"+pmid);      
+              $.ajax({
+              url: $pmteamChart.data("url"),
+              data:{
+                  'mn_yr':mn_yr,
+                  'xpmid':pmid
+              },
+              success: function (response) {      
+                let ctx = $pmteamChart[0].getContext("2d");      
+                myChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: response.labels,
+                    datasets: [{
+                      label: 'Hours',
+                      backgroundColor: 'red',
+                      data: response.data,
+                      barPercentage: 0.5,
+                      barThickness: 19,
+                      maxBarThickness: 19,
+                    }]          
+                  },
+                  options: {
+                    responsive: true,
+                    legend: {
+                      position: 'top',
+                    },
+                    title:{
+                      display: true,
+                      text: 'Total hours contributed'
+                    },
+                    scales: {
+                      yAxes: [{
+                          ticks: {
+                            beginAtZero: true
+                          }
+                      }]
+                    },
+                    onClick: (evt, item) => {
+                            let index = item[0]["_index"];
+                            let staffname = item[0]["_chart"].data.labels[index];
+                            let staffhours = item[0]["_chart"].data.datasets[0].data[index];
+                            $.ajax({
+                                url: 'barclick',
+                                data:{
+                                    'mn_yr':mn_yr,
+                                    'fn':staffname,
+                                    'shrs':staffhours,
+                                    'pmid':pmid
+                                },
+                                success:function (response){
+                                    var total = response.category.length;
+                                    var html="";
+                                    html += ' <table class="table table-striped">';
+                                            html += '<thead>';  
+                                            html += '<tr><th>Date</th><th>Project</th><th>Category</th><th>Description</th><th>Hours</th></tr></thead><tbody>'; 
+                                    for (i=0;i<total;i++){
+                                            html += '<tr>';
+                                            html += '<td> '+response.startdate[i]+'</td>';
+                                            html += '<td> '+response.proj[i]+'</td>';
+                                            html += '<td> '+response.category[i]+'</td>';
+                                            html += '<td> '+response.desc[i]+' </td>';
+                                            html += '<td> '+response.hrs[i]+' </td>';
+                                            html += '</tr>';
+                                    }
+                                    html += '</tbody></table>';
+                                    $("#myModal").find(".modal-body").html(html);
+                                    $("#myModal").modal("show");
+                                }
+
+                            });
+                    }
+                  }
+                });
+      
+              }
+            });
+            });             
+            
+
+
+        </script>
+{% endblock %}
+
